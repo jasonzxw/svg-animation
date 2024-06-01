@@ -1,65 +1,20 @@
 <template>
-  <svg
-    version="1.1"
-    baseProfile="full"
-    :width="svgInfo.width"
-    :height="svgInfo.height"
-    xmlns="http://www.w3.org/2000/svg"
-    class="svg_container"
-    ref="containerRef"
-    @mousemove="leftMousemove"
-  >
-    <circle
-      :cx="svgInfo.leftCircleStartpoint.x"
-      :cy="svgInfo.leftCircleStartpoint.y"
-      :r="svgInfo.r"
-      fill="#792fff"
-      ref="leftCircle"
-      @mousedown="leftMousedown"
-      @mouseup="leftMouseup"
-      id="leftcircle"
-    />
-    <line
-      :x1="svgInfo.leftRefStartInfo.x"
-      :x2="svgInfo.leftCircleStartpoint.x"
-      :y1="svgInfo.leftRefStartInfo.y"
-      :y2="svgInfo.leftCircleStartpoint.y"
-      stroke="#792fff"
-      stroke-width="5"
-    />
+  <svg version="1.1" baseProfile="full" :width="svgInfo.width" :height="svgInfo.height"
+    xmlns="http://www.w3.org/2000/svg" class="svg_container" ref="containerRef" @mousemove="leftMousemove">
+    <circle :cx="svgInfo.leftCircleStartpoint.x" :cy="svgInfo.leftCircleStartpoint.y" :r="svgInfo.r" fill="#792fff"
+      ref="leftCircle" @mousedown="leftMousedown" @mouseup="leftMouseup" id="leftcircle" />
+    <line :x1="svgInfo.leftRefStartInfo.x" :x2="svgInfo.leftCircleStartpoint.x" :y1="svgInfo.leftRefStartInfo.y"
+      :y2="svgInfo.leftCircleStartpoint.y" stroke="#792fff" stroke-width="5" />
 
-    <circle
-      :cx="svgInfo.rightCircleStartpoint.x"
-      :cy="svgInfo.rightCircleStartpoint.y"
-      :r="svgInfo.r"
-      fill="#792fff"
-      ref="rightCircle"
-      @mousedown="rightMousedown"
-    />
-    <line
-      :x1="svgInfo.rightRefStartInfo.x"
-      :x2="svgInfo.rightCircleStartpoint.x"
-      :y1="svgInfo.rightRefStartInfo.y"
-      :y2="svgInfo.rightCircleStartpoint.y"
-      stroke="#792fff"
-      stroke-width="5"
-    />
+    <circle :cx="svgInfo.rightCircleStartpoint.x" :cy="svgInfo.rightCircleStartpoint.y" :r="svgInfo.r" fill="#792fff"
+      ref="rightCircle" @mousedown="rightMousedown" />
+    <line :x1="svgInfo.rightRefStartInfo.x" :x2="svgInfo.rightCircleStartpoint.x" :y1="svgInfo.rightRefStartInfo.y"
+      :y2="svgInfo.rightCircleStartpoint.y" stroke="#792fff" stroke-width="5" />
 
-    <line
-      :x1="svgInfo.leftRefStartInfo.x"
-      :x2="svgInfo.rightRefStartInfo.x"
-      :y1="svgInfo.leftRefStartInfo.y"
-      :y2="svgInfo.rightRefStartInfo.y"
-      stroke="gray"
-      stroke-width="5"
-    />
+    <line :x1="svgInfo.leftRefStartInfo.x" :x2="svgInfo.rightRefStartInfo.x" :y1="svgInfo.leftRefStartInfo.y"
+      :y2="svgInfo.rightRefStartInfo.y" stroke="gray" stroke-width="5" />
 
-    <path
-      stroke="#868686"
-      strokeOpacity="1" fill="none"
-      pointerEvents="visibleStroke"
-      fillOpacity="1"
-      troke="#792fff"
+    <path stroke="#868686" strokeOpacity="1" fill="none" pointerEvents="visibleStroke" fillOpacity="1" troke="#792fff"
       :d="becir"></path>
   </svg>
 </template>
@@ -95,13 +50,13 @@ const svgInfo = reactive({
 });
 
 const center = ref({
-    x: 100,
-    y: 100
+  x: 100,
+  y: 100
 })
 
 const becir = computed(() => {
-    let x = `M ${svgInfo.leftRefStartInfo.x} ${svgInfo.leftRefStartInfo.y} Q ${center.value.x} ${center.value.y} ${svgInfo.rightRefStartInfo.x} ${svgInfo.rightRefStartInfo.y}`
-    return x
+  let x = `M ${svgInfo.leftRefStartInfo.x} ${svgInfo.leftRefStartInfo.y} Q ${center.value.x} ${center.value.y} ${svgInfo.rightRefStartInfo.x} ${svgInfo.rightRefStartInfo.y}`
+  return x
 })
 const mouseinfo = ref({
   leftMove: false,
@@ -112,13 +67,27 @@ const leftMousedown = () => {
 };
 const leftMousemove = (e: MouseEvent) => {
   if (mouseinfo.value.leftMove) {
-    const container = containerRef.value.getBoundingClientRect();
-    svgInfo.leftCircleStartpoint.x = center.value.x = e.clientX - container.left;
-    svgInfo.leftCircleStartpoint.y = center.value.y =e.clientY - container.top;
+    const container = containerRef.value!.getBoundingClientRect();
+    let x = e.clientX - container.left;
+    if (x < svgInfo.leftRefStartInfo.x) {
+      x = svgInfo.leftRefStartInfo.x;
+    }
+    if (x > svgInfo.rightRefStartInfo.x) {
+      x = svgInfo.rightRefStartInfo.x;
+    }
+    svgInfo.leftCircleStartpoint.x = center.value.x = x;
+    svgInfo.leftCircleStartpoint.y = center.value.y = e.clientY - container.top;
   }
   if (mouseinfo.value.rightMove) {
-    const container = containerRef.value.getBoundingClientRect();
-    svgInfo.rightCircleStartpoint.x = center.value.x =  e.clientX - container.left;
+    const container = containerRef.value!.getBoundingClientRect();
+    let x = e.clientX - container.left;
+    if (x < svgInfo.leftRefStartInfo.x) {
+      x = svgInfo.leftRefStartInfo.x;
+    }
+    if (x > svgInfo.rightRefStartInfo.x) {
+      x = svgInfo.rightRefStartInfo.x;
+    }
+    svgInfo.rightCircleStartpoint.x = center.value.x = x;
     svgInfo.rightCircleStartpoint.y = center.value.y = e.clientY - container.top;
   }
 };
